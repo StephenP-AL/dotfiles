@@ -91,6 +91,10 @@ inoremap {<CR>  {<CR>}<Esc>O
 inoremap {{     {
 inoremap {}     {}
 inoremap ;;}	<Esc>/}<Enter>a
+"enclose current word
+inoremap vv{	<esc>bi{<esc>ea}
+"enclose current line
+inoremap vvv{	<esc>0i{<esc>A}
 
 "---------------------------------------------------------------
 "---------------------------------------------------------------

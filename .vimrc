@@ -56,7 +56,10 @@ inoremap <c-s-l> <esc>:vertical resize +2<CR>a
 
 "---------------------------------------------------------------
 " ---Tabs
+"Unix new tab
 nmap <silent> <F4> :tabnew `dirname %`<CR>
+"Windows new tab
+"nmap <silent> <F4> :tabnew  %:p:h:gs?\/?\\\\\\?<CR>
 nnoremap <F5> :tabp<CR>
 nnoremap <F8> :tabn<CR>
 nnoremap <silent> <F6> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>

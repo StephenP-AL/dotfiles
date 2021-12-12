@@ -20,12 +20,16 @@ inoremap <F3> <C-O>:set invnumber<CR>
 " Save with sudo"
 cmap w!! w !sudo tee > /dev/null %
 
+" Session quicksave
+map <F11> :mks!<space>quicksave.vim<cr>
+inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
+
 " Center on search
 nnoremap n	nzz
 nnoremap N	Nzz
 
 "---------------------------------------------------------------
-" ---Panes 
+" ---Split panes 
 set splitright
 set splitbelow
 	

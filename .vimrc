@@ -103,6 +103,10 @@ inoremap vv{	<esc>bi{<esc>ea}
 "enclose current line
 inoremap vvv{	<esc>0i{<esc>A}
 
+"visual mode
+vnoremap ;;" <esc>`<i"<esc>`>a"<esc>
+vnoremap ;;( <esc>`<i(<esc>`>a)<esc>
+vnoremap ;;{ <esc>`<i{<esc>`>a}<esc>
 "---------------------------------------------------------------
 "---------------------------------------------------------------
 " ---File specific keybindings
@@ -122,6 +126,7 @@ autocmd FileType cpp inoremap ;;dm #ifdef<space>DEBUG<Enter>printf("%s\n","---DE
 autocmd FileType cpp inoremap ;;d1 #ifdef<space>DEBUG1<Enter>printf("%s\n","---DEBUG1---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
 autocmd FileType cpp inoremap ;;d2 #ifdef<space>DEBUG2<Enter>printf("%s\n","---DEBUG2---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
 autocmd FileType cpp inoremap ;;- //-------------------------------------------<Enter><Enter>-------------------------------------------<Enter><Esc>02xi<++><Esc>2kA<space>
+autocmd FileType cpp vnoremap ;;c <esc>`<i/*<space><cr><esc>`>a<cr>*/<esc>
 
 "---------------------------------------------------------------
 " ---LaTeX keybinding
@@ -141,6 +146,8 @@ autocmd FileType sh inoremap ;;ca read<space>n<Enter>case<space>$n<space>in<Ente
 autocmd FileType sh inoremap ;;ci )<tab><++><Enter>&&<esc>hr;lr;o<++><esc>2k0la
 autocmd FileType sh inoremap ;;w while<space>;<space>do<Enter><++><Enter>done<Enter><++><esc>3k0wi
 autocmd FileType sh inoremap ;;f for<space><space>in<space><++>;<space>do<Enter><++><Enter>done<esc>2k04li
+autocmd FileType sh vnoremap ;;c <esc>`<i:<space>'<space><cr><esc>`>a<cr>'<esc>
+
 
 "---------------------------------------------------------------
 " ---md keybindings
@@ -149,3 +156,13 @@ autocmd FileType md inoremap ;;c <Esc>o```<Enter><Enter>```<Enter><++><Esc>2ki
 autocmd FileType md inoremap ;;i ![](image/<++>)<Esc>12hi
 autocmd FileType md inoremap ;;l [](<++>)<Esc>6hi
 autocmd FileType md inoremap ;;el [](http://<++>)<Esc>13hi
+
+
+"---------------------------------------------------------------
+" ---Assembly keybindings
+autocmd BufRead,BufNewFile *.s setlocal filetype=s
+"for loop
+autocmd FileType s inoremap ;;f <esc>0d$i@<esc>pomov<space>r0,<space>#<tab>@Iterations<cr><esc>pAStart:<tab>@Beginning<space>of<space>the<space>loop<cr><++><cr>subs,<space>r0,<space>#1<tab>@Decrement<space>the<space>counter<cr>bne<space><esc>pAStart<esc>4k03wa
+"add string to data
+autocmd FileType s inoremap ;;st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li
+autocmd FileType s nnoremap ;;st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li

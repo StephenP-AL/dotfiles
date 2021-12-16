@@ -3,6 +3,7 @@ set nocompatible
 filetype plugin indent on
 set number
 let mapleader = ";;"
+hi! link netrwMarkFile Search
 
 "---------------------------------------------------------------
 "---------------------------------------------------------------

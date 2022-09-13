@@ -1,5 +1,7 @@
 syntax on
 set nocompatible
+set rtp+=~/.vim/tabnine-vim
+set rtp+=~/.vim/bundle/YouCompleteMe
 filetype plugin indent on
 set number
 let mapleader = ";;"
@@ -115,7 +117,7 @@ vnoremap <leader>{ <esc>`<i{<esc>`>a}<esc>
 "---------------------------------------------------------------
 " ---C/C++ keybindings
 autocmd BufRead,BufNewFile *.c setlocal filetype=cpp
-autocmd FileType cpp inoremap <leader>f for(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+autocmd FileType cpp inoremap <leader>f for()<Enter>{<Enter><++><Enter>}<Enter><++><Esc>4k$T(i
 autocmd FileType cpp inoremap <leader>w while(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
 autocmd FileType cpp inoremap <leader>do do<Enter>{<Enter><space><Enter>}while(<++>);<Enter><++><Esc>2k$i
 autocmd FileType cpp inoremap <leader>if if(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
@@ -129,6 +131,15 @@ autocmd FileType cpp inoremap <leader>- //--------------------------------------
 autocmd FileType cpp vnoremap <leader>c <esc>`<i/*<space><cr><esc>`>a<cr>*/<esc>
 
 "---------------------------------------------------------------
+" ---GOlang keybinding
+autocmd BufRead, BufNewFile *.go setlocal filetype=go
+autocmd FileType go inoremap <leader>f for<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
+autocmd FileType go inoremap <leader>if if<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
+autocmd FileType go inoremap <leader>el else<space>{<Enter>}<Enter><++><Esc>2ko
+
+autocmd FileType go vnoremap <leader>c <esc>`<i/*<space><cr><esc>`>a<cr>*/<esc>
+
+"---------------------------------------------------------------
 " ---LaTeX keybinding
 autocmd FileType tex inoremap <leader>tempa \documentclass{article}<Enter>\title{<++>}<Enter>\author{Stephen Pate}<Enter>\usepackage[margin=1in]{geometry}<Enter><Enter>\begin{document}<Enter>\maketitle<Enter><++><Enter>\end{document}<Esc>8k15li
 autocmd BufRead,BufNewFile *.tex setlocal filetype=tex
@@ -138,6 +149,8 @@ autocmd FileType tex inoremap <leader>desc \begin{description}<Enter><Enter>\end
 autocmd FileType tex inoremap <leader>I \item<space>
 autocmd FileType tex inoremap <leader>eq \begin{equation}<Enter><Enter>\end{equation}<Enter><++><Esc>2ki
 autocmd FileType tex inoremap <leader>tab \begin{tabular}[t]{}<Enter><++><Enter>\end{tabular}<Enter><++><Esc>3k/]{<Enter>2li
+autocmd FileType tex vnoremap <leader>b <esc>`>a}<esc>`<i\textbf{<esc>
+
 
 "---------------------------------------------------------------
 " ---sh keybinding

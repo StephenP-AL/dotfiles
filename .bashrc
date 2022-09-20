@@ -139,8 +139,8 @@ ex ()
     echo "'$1' is not a valid file"
   fi
 }
-# CD also does LS
 [ -z "$PS1" ] && return
+# Upon cd, pwd and list directory contents. If directory contains to many files to be meaningful, lists only subdirectories and a file count
 function cd {
 	builtin cd "$@" && pwd && dirfilecount=$(ls -p | grep -v / | wc -l) && if [ $dirfilecount -lt 50 ]; then ls -shF; else echo "$dirfilecount files" && ls -d */ 2> /dev/null; fi
 }

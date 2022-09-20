@@ -106,9 +106,9 @@ inoremap vv{	<esc>bi{<esc>ea}
 inoremap vvv{	<esc>0i{<esc>A}
 
 "visual mode
-vnoremap <leader>" <esc>`<i"<esc>`>a"<esc>
-vnoremap <leader>( <esc>`<i(<esc>`>a)<esc>
-vnoremap <leader>{ <esc>`<i{<esc>`>a}<esc>
+vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
+vnoremap <leader>( <esc>`>a(<esc>`<i)<esc>
+vnoremap <leader>{ <esc>`>a{<esc>`<i}<esc>
 "---------------------------------------------------------------
 "---------------------------------------------------------------
 " ---File specific keybindings
@@ -128,8 +128,7 @@ autocmd FileType cpp inoremap <leader>dm #ifdef<space>DEBUG<Enter>printf("%s\n",
 autocmd FileType cpp inoremap <leader>d1 #ifdef<space>DEBUG1<Enter>printf("%s\n","---DEBUG1---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
 autocmd FileType cpp inoremap <leader>d2 #ifdef<space>DEBUG2<Enter>printf("%s\n","---DEBUG2---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
 autocmd FileType cpp inoremap <leader>- //-------------------------------------------<Enter><Enter>-------------------------------------------<Enter><Esc>02xi<++><Esc>2kA<space>
-autocmd FileType cpp vnoremap <leader>c <esc>`<i/*<space><cr><esc>`>a<cr>*/<esc>
-
+autocmd FileType cpp vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
 "---------------------------------------------------------------
 " ---GOlang keybinding
 autocmd BufRead, BufNewFile *.go setlocal filetype=go
@@ -137,7 +136,7 @@ autocmd FileType go inoremap <leader>f for<space>{<Enter><++><Enter>}<Enter><++>
 autocmd FileType go inoremap <leader>if if<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
 autocmd FileType go inoremap <leader>el else<space>{<Enter>}<Enter><++><Esc>2ko
 
-autocmd FileType go vnoremap <leader>c <esc>`<i/*<space><cr><esc>`>a<cr>*/<esc>
+autocmd FileType go vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
 
 "---------------------------------------------------------------
 " ---LaTeX keybinding
@@ -150,6 +149,7 @@ autocmd FileType tex inoremap <leader>I \item<space>
 autocmd FileType tex inoremap <leader>eq \begin{equation}<Enter><Enter>\end{equation}<Enter><++><Esc>2ki
 autocmd FileType tex inoremap <leader>tab \begin{tabular}[t]{}<Enter><++><Enter>\end{tabular}<Enter><++><Esc>3k/]{<Enter>2li
 autocmd FileType tex vnoremap <leader>b <esc>`>a}<esc>`<i\textbf{<esc>
+autocmd FileType tex vnoremap <leader>i <esc>`>a}<esc>`<i\textit{<esc>
 
 
 "---------------------------------------------------------------

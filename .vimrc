@@ -3,7 +3,7 @@ set nocompatible
 set rtp+=~/.vim/tabnine-vim
 set rtp+=~/.vim/bundle/YouCompleteMe
 filetype plugin indent on
-set number
+set relativenumber
 let mapleader = ";;"
 hi! link netrwMarkFile Search
 
@@ -16,8 +16,8 @@ map <F2> :setlocal spell! spelllang=en_us<CR>
 inoremap <F2> <Esc>:setlocal spell! spelllang=en_us<CR>a
  
 "Line numbers
-noremap <F3> :set invnumber<CR>
-inoremap <F3> <C-O>:set invnumber<CR>
+noremap <F3> :set rnu!<CR>
+inoremap <F3> <C-O>:set rnu!<CR>
 
 " Save with sudo"
 cmap w!! w !sudo tee > /dev/null %

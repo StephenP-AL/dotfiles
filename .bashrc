@@ -148,4 +148,3 @@ export PATH="$HOME/bin:$PATH"
 export EDITOR=vim
 export VISUAL=vim
 export VISUAL EDITOR=vim
-# This comment is only here to test a script

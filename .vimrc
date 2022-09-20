@@ -30,16 +30,24 @@ inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
 nnoremap n	nzz
 nnoremap N	Nzz
 
+"Find code reentry tag
+"inoremap <leader><space> <Esc>/<++><Enter>4xa
+inoremap <leader><space> <Esc>/<++><Enter>"_4cl
+
+
 "---------------------------------------------------------------
 " ---Split panes 
 set splitright
 set splitbelow
 	
+" vertical split
 nnoremap <c-w>" :sp `dirname %`<cr> 
 inoremap <c-w>" <esc>:sp `dirname %`<cr> 
+" horizontal spilt
 nnoremap <c-w>% :vsplit `dirname %`<cr> 
 inoremap <c-w>% <esc>:vsplit `dirname %`<cr> 
 
+" resize panes
 nnoremap <c-s-k> :resize +2<CR>
 nnoremap <c-s-j> :resize -2<CR>
 nnoremap <c-s-h> :vertical resize -2<CR>
@@ -62,50 +70,58 @@ inoremap <c-s-l> <esc>:vertical resize +2<CR>a
 nmap <silent> <F4> :tabnew `dirname %`<CR>
 "Windows new tab
 "nmap <silent> <F4> :tabnew  %:p:h:gs?\/?\\\\\\?<CR>
+
+"Cycle tabs
 nnoremap <F5> :tabp<CR>
 nnoremap <F8> :tabn<CR>
+
+"Move tabs
 nnoremap <silent> <F6> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <F7> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
-
-"inoremap <leader><space> <Esc>/<++><Enter>4xa
-inoremap <leader><space> <Esc>/<++><Enter>"_4cl
 
 "---------------------------------------------------------------
 " ---Auto close tags
 
+" --Parenthesis
 inoremap (	()<Left>
 inoremap ((	(
 inoremap ()	()
 "skips over ) if ) is next character
 inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
+"place cursor after closing )
 inoremap <leader>)	<Esc>/)<Enter>a
 "enclose current word
 inoremap vv(	<esc>bi(<esc>ea)
 "enclose current line
 inoremap vvv(	<esc>0i(<esc>A)
 
+" --Double quote
 inoremap ""	""<Left>
 "skips over " if " is next character
 inoremap <expr> "  strpart(getline('.'), col('.')-1, 1) == '"' ? "\<Right>" : '"'
+"place cursor after next "
 inoremap <leader>"	<Esc>/"<Enter>a
 "enclose current word
 inoremap vv" <esc>bi"<esc>ea"
 "enclose current line
 inoremap vvv" <esc>0i"<esc>A" 
 
+" --Braces
 inoremap {      {}<Left>
-"skips over } if { is next character
-inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
+
 inoremap {<CR>  {<CR>}<Esc>O
 inoremap {{     {
 inoremap {}     {}
+"skips over } if { is next character
+inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
+"place cursor after closing }
 inoremap <leader>}	<Esc>/}<Enter>a
 "enclose current word
 inoremap vv{	<esc>bi{<esc>ea}
 "enclose current line
 inoremap vvv{	<esc>0i{<esc>A}
 
-"visual mode
+"visual mode, enclose selected text
 vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
 vnoremap <leader>( <esc>`>a(<esc>`<i)<esc>
 vnoremap <leader>{ <esc>`>a{<esc>`<i}<esc>
@@ -117,25 +133,40 @@ vnoremap <leader>{ <esc>`>a{<esc>`<i}<esc>
 "---------------------------------------------------------------
 " ---C/C++ keybindings
 autocmd BufRead,BufNewFile *.c setlocal filetype=cpp
+"for loop
 autocmd FileType cpp inoremap <leader>f for()<Enter>{<Enter><++><Enter>}<Enter><++><Esc>4k$T(i
+"while loop
 autocmd FileType cpp inoremap <leader>w while(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+"do while loop
 autocmd FileType cpp inoremap <leader>do do<Enter>{<Enter><space><Enter>}while(<++>);<Enter><++><Esc>2k$i
+"if statement
 autocmd FileType cpp inoremap <leader>if if(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+"else statement
 autocmd FileType cpp inoremap <leader>el else<Enter>{<Enter><space><Enter>}<Enter><++><Esc>2k$i
+"else if statement
 autocmd FileType cpp inoremap <leader>ei else<space>if(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+"debug code section
 autocmd FileType cpp inoremap <leader>de #ifdef<space>DEBUG<Enter><Enter>#endif<Enter><++><Esc>2k$i
+"debug message
 autocmd FileType cpp inoremap <leader>dm #ifdef<space>DEBUG<Enter>printf("%s\n","---DEBUG---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
+"another debug message
 autocmd FileType cpp inoremap <leader>d1 #ifdef<space>DEBUG1<Enter>printf("%s\n","---DEBUG1---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
+"another debug message
 autocmd FileType cpp inoremap <leader>d2 #ifdef<space>DEBUG2<Enter>printf("%s\n","---DEBUG2---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
+"a comment section deliniated by lines of hyphens
 autocmd FileType cpp inoremap <leader>- //-------------------------------------------<Enter><Enter>-------------------------------------------<Enter><Esc>02xi<++><Esc>2kA<space>
+"Encloses selected section in comment tags
 autocmd FileType cpp vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
 "---------------------------------------------------------------
 " ---GOlang keybinding
 autocmd BufRead, BufNewFile *.go setlocal filetype=go
+"for loop
 autocmd FileType go inoremap <leader>f for<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
+"if statement
 autocmd FileType go inoremap <leader>if if<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
+"else if statement
 autocmd FileType go inoremap <leader>el else<space>{<Enter>}<Enter><++><Esc>2ko
-
+"Encloses selected section in comment tags
 autocmd FileType go vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
 
 "---------------------------------------------------------------

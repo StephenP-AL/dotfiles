@@ -3,7 +3,7 @@ set nocompatible
 set rtp+=~/.vim/tabnine-vim
 set rtp+=~/.vim/bundle/YouCompleteMe
 filetype plugin indent on
-set relativenumber
+set number
 let mapleader = ";;"
 hi! link netrwMarkFile Search
 
@@ -16,8 +16,8 @@ map <F2> :setlocal spell! spelllang=en_us<CR>
 inoremap <F2> <Esc>:setlocal spell! spelllang=en_us<CR>a
  
 "Line numbers
-noremap <F3> :set rnu!<CR>
-inoremap <F3> <C-O>:set rnu!<CR>
+noremap <F3> :set invnumber!<CR>
+inoremap <F3> <C-O>:set invnumber!<CR>
 
 " Save with sudo"
 cmap w!! w !sudo tee > /dev/null %
@@ -123,8 +123,8 @@ inoremap vvv{	<esc>0i{<esc>A}
 
 "visual mode, enclose selected text
 vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
-vnoremap <leader>( <esc>`>a(<esc>`<i)<esc>
-vnoremap <leader>{ <esc>`>a{<esc>`<i}<esc>
+vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>
+vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>
 "---------------------------------------------------------------
 "---------------------------------------------------------------
 " ---File specific keybindings
@@ -179,17 +179,25 @@ autocmd FileType tex inoremap <leader>desc \begin{description}<Enter><Enter>\end
 autocmd FileType tex inoremap <leader>I \item<space>
 autocmd FileType tex inoremap <leader>eq \begin{equation}<Enter><Enter>\end{equation}<Enter><++><Esc>2ki
 autocmd FileType tex inoremap <leader>tab \begin{tabular}[t]{}<Enter><++><Enter>\end{tabular}<Enter><++><Esc>3k/]{<Enter>2li
+autocmd FileType tex inoremap <leader>{ \{\}<++><Esc>5hi
+"Bold selected text
 autocmd FileType tex vnoremap <leader>b <esc>`>a}<esc>`<i\textbf{<esc>
+"italicize selected text
 autocmd FileType tex vnoremap <leader>i <esc>`>a}<esc>`<i\textit{<esc>
 
 
 "---------------------------------------------------------------
 " ---sh keybinding
 autocmd BufRead,BufNewFile *.sh setlocal filetype=sh
+"case/switch statement
 autocmd FileType sh inoremap <leader>ca read<space>n<Enter>case<space>$n<space>in<Enter><Enter>*)<++><Enter>&&<esc>hr;lr;oesac<Enter><++><esc>4ki<tab>
+"case item
 autocmd FileType sh inoremap <leader>ci )<tab><++><Enter>&&<esc>hr;lr;o<++><esc>2k0la
+"while loop
 autocmd FileType sh inoremap <leader>w while<space>;<space>do<Enter><++><Enter>done<Enter><++><esc>3k0wi
+"for loop
 autocmd FileType sh inoremap <leader>f for<space><space>in<space><++>;<space>do<Enter><++><Enter>done<esc>2k04li
+"comment out selected text
 autocmd FileType sh vnoremap <leader>c <esc>`<i:<space>'<space><cr><esc>`>a<cr>'<esc>
 
 

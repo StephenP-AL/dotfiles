@@ -134,17 +134,17 @@ vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>
 " ---C/C++ keybindings
 autocmd BufRead,BufNewFile *.c setlocal filetype=cpp
 "for loop
-autocmd FileType cpp inoremap <leader>f for()<Enter>{<Enter><++><Enter>}<Enter><++><Esc>4k$T(i
+autocmd FileType cpp inoremap <leader>f for(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
 "while loop
-autocmd FileType cpp inoremap <leader>w while(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+autocmd FileType cpp inoremap <leader>w while(){<Enter><space><++><Enter>}<Enter><++><Esc>3k$T(i
 "do while loop
-autocmd FileType cpp inoremap <leader>do do<Enter>{<Enter><space><Enter>}while(<++>);<Enter><++><Esc>2k$i
+autocmd FileType cpp inoremap <leader>do do{<Enter><Enter>}while(<++>);<Enter><++><Esc>2k$i
 "if statement
-autocmd FileType cpp inoremap <leader>if if(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+autocmd FileType cpp inoremap <leader>if if(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
 "else statement
-autocmd FileType cpp inoremap <leader>el else<Enter>{<Enter><space><Enter>}<Enter><++><Esc>2k$i
+autocmd FileType cpp inoremap <leader>el else{<Enter><Enter>}<Enter><++><Esc>2k$i<tab>
 "else if statement
-autocmd FileType cpp inoremap <leader>ei else<space>if(<space>)<Enter>{<Enter><space><++><Enter>}<Enter><++><Esc>4k$T(i
+autocmd FileType cpp inoremap <leader>ei else<space>if(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
 "debug code section
 autocmd FileType cpp inoremap <leader>de #ifdef<space>DEBUG<Enter><Enter>#endif<Enter><++><Esc>2k$i
 "debug message

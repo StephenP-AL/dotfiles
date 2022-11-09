@@ -184,7 +184,8 @@ autocmd FileType tex inoremap <leader>{ \{\}<++><Esc>5hi
 autocmd FileType tex vnoremap <leader>b <esc>`>a}<esc>`<i\textbf{<esc>
 "italicize selected text
 autocmd FileType tex vnoremap <leader>i <esc>`>a}<esc>`<i\textit{<esc>
-
+"math tag selected text
+autocmd FileType tex vnoremap <leader>$ <esc>`>a$<esc>`<i$<esc>
 
 "---------------------------------------------------------------
 " ---sh keybinding

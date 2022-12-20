@@ -68,16 +68,24 @@ inoremap <c-s-l> <esc>:vertical resize +2<CR>a
 " ---Tabs
 "Unix new tab
 nmap <silent> <F4> :tabnew `dirname %`<CR>
+nmap <silent> <Tab>o :tabnew `dirname %`<CR>
 "Windows new tab
 "nmap <silent> <F4> :tabnew  %:p:h:gs?\/?\\\\\\?<CR>
 
 "Cycle tabs
 nnoremap <F5> :tabp<CR>
+nnoremap <Tab>h :tabp<CR>
+
 nnoremap <F8> :tabn<CR>
+nnoremap <Tab>l :tabn<CR>
 
 "Move tabs
 nnoremap <silent> <F6> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
 nnoremap <silent> <F7> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
+
+nnoremap <silent> <Tab>j :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
+nnoremap <silent> <Tab>k :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
+
 
 "---------------------------------------------------------------
 " ---Auto close tags

@@ -92,7 +92,7 @@ nnoremap <silent> <Tab>k :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
 
 " --Parenthesis
 inoremap (	()<Left>
-inoremap ((	(
+"inoremap ((	(
 inoremap ()	()
 "skips over ) if ) is next character
 inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
@@ -118,7 +118,7 @@ inoremap vvv" <esc>0i"<esc>A"
 inoremap {      {}<Left>
 
 inoremap {<CR>  {<CR>}<Esc>O
-inoremap {{     {
+"inoremap {{     {
 inoremap {}     {}
 "skips over } if { is next character
 inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"

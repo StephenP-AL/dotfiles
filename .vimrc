@@ -34,6 +34,9 @@ nnoremap N	Nzz
 "inoremap <leader><space> <Esc>/<++><Enter>4xa
 inoremap <leader><space> <Esc>/<++><Enter>"_4cl
 
+"open terminal
+map <F9> :ter
+inoremap <F9> <esc>:ter
 
 "---------------------------------------------------------------
 " ---Split panes 

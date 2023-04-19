@@ -6,6 +6,9 @@ filetype plugin indent on
 set number
 let mapleader = ";;"
 hi! link netrwMarkFile Search
+call plug#begin()
+Plug 'codota/tabnine-vim'
+call plug#end()
 
 "---------------------------------------------------------------
 "---------------------------------------------------------------
@@ -35,8 +38,8 @@ nnoremap N	Nzz
 inoremap <leader><space> <Esc>/<++><Enter>"_4cl
 
 "open terminal
-map <F9> :ter
-inoremap <F9> <esc>:ter
+map <F9> :ter<cr>
+inoremap <F9> <esc>:ter<cr>
 
 "---------------------------------------------------------------
 " ---Split panes 

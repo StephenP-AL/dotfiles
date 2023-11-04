@@ -1,15 +1,18 @@
 syntax on
 set nocompatible
-set rtp+=~/.vim/tabnine-vim
-set rtp+=~/.vim/bundle/YouCompleteMe
+"set rtp+=~/.vim/tabnine-vim
+"set rtp+=~/.vim/bundle/YouCompleteMe
+packadd YouCompleteMe
 filetype plugin indent on
 set number
 let mapleader = ";;"
 hi! link netrwMarkFile Search
-call plug#begin()
-Plug 'codota/tabnine-vim'
-call plug#end()
 
+"call plug#begin()
+"Plug 'codota/tabnine-vim'
+"call plug#end()
+
+colorscheme jellybeans
 "---------------------------------------------------------------
 "---------------------------------------------------------------
 " ---Global keybindings
@@ -28,6 +31,10 @@ cmap w!! w !sudo tee > /dev/null %
 " Session quicksave
 map <F11> :mks!<space>quicksave.vim<cr>
 inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
+
+map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
+
+map <F10> :echo "Using vimrc binding" <bar> echo "fart"<cr>
 
 " Center on search
 nnoremap n	nzz

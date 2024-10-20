@@ -149,6 +149,7 @@ function cd {
 	builtin cd "$@" && pwd && dirfilecount=$(ls -p | grep -v / | wc -l) && if [ $dirfilecount -lt 50 ]; then ls -shF; else echo "$dirfilecount files" && ls -d */ 2> /dev/null; fi
 }
 export PATH="$HOME/bin:$PATH"
+export PATH="/usr/local/bin:$PATH"
 export EDITOR=vim
 export VISUAL=vim
 export VISUAL EDITOR=vim

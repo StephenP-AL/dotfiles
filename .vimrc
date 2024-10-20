@@ -1,21 +1,59 @@
 syntax on
+
+"Vundle
 set nocompatible
-"set rtp+=~/.vim/tabnine-vim
-"set rtp+=~/.vim/bundle/YouCompleteMe
-packadd YouCompleteMe
+filetype plugin off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'nanotech/jellybeans.vim'
+Plugin 'preservim/nerdtree'
+Plugin 'tpope/vim-surround'
+Plugin 'VundleVime/Vundle.vim'
+Plugin 'ycm-core/YouCompleteMe'
+call vundle#end()   
+
+
 filetype plugin indent on
 set number
 let mapleader = ";;"
 hi! link netrwMarkFile Search
 
-"call plug#begin()
-"Plug 'codota/tabnine-vim'
-"call plug#end()
 
+"ctags
+set tags=./tags,../tags,/usr/include/rsvisa/tags;
+
+"Search
+command! -nargs=1 Vgrep vimgrep /<args>/ **/* | copen
+
+
+"colors
+set term=screen-256color
 colorscheme jellybeans
 "---------------------------------------------------------------
 "---------------------------------------------------------------
 " ---Global keybindings
+
+"File browser
+let g:netrw_banner = 0
+let g:netrw_browse_split = 4
+let g:netrw_winsize = 20 
+let g:netrw_liststyle = 3
+
+
+"autocmd FileType netrw nmap <buffer> <F4> :q<cr>
+"nnoremap F4> <esc>:Vexplore<cr>
+
+"NERDTree
+nnoremap <F4> <esc>:NERDTreeToggleVCS<cr>
+" Open the existing NERDTree on each new tab.
+autocmd BufWinEnter * if &buftype != 'quickfix' && getcmdwintype() == '' | silent NERDTreeMirror | endif
+
+" Selected files open in new tab
+"let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
+
+" Close the tab if NERDTree is the only window remaining in it.
+autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
 
 "Spell check
 map <F2> :setlocal spell! spelllang=en_us<CR>
@@ -34,8 +72,6 @@ inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
 
 map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
 
-map <F10> :echo "Using vimrc binding" <bar> echo "fart"<cr>
-
 " Center on search
 nnoremap n	nzz
 nnoremap N	Nzz
@@ -52,6 +88,7 @@ inoremap <F9> <esc>:ter<cr>
 " ---Split panes 
 set splitright
 set splitbelow
+
 	
 " vertical split
 nnoremap <c-w>" :sp `dirname %`<cr> 
@@ -71,16 +108,10 @@ inoremap <c-s-j> <esc>:resize -2<CR>a
 inoremap <c-s-h> <esc>:vertical resize -2<CR>a
 inoremap <c-s-l> <esc>:vertical resize +2<CR>a
 
-
-""nnoremap <Up>    :resize +2<CR>
-""nnoremap <Down>  :resize -2<CR>
-""nnoremap <Left>  :vertical resize -2<CR>
-""nnoremap <Right> :vertical resize +2<CR>
-
 "---------------------------------------------------------------
 " ---Tabs
 "Unix new tab
-nmap <silent> <F4> :tabnew `dirname %`<CR>
+"nmap <silent> <F4> :tabnew `dirname %`<CR>
 nmap <silent> <Tab>o :tabnew `dirname %`<CR>
 "Windows new tab
 "nmap <silent> <F4> :tabnew  %:p:h:gs?\/?\\\\\\?<CR>
@@ -104,9 +135,9 @@ nnoremap <silent> <Tab>k :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
 " ---Auto close tags
 
 " --Parenthesis
-inoremap (	()<Left>
+"inoremap (	()<Left>
 "inoremap ((	(
-inoremap ()	()
+"inoremap ()	()
 "skips over ) if ) is next character
 inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
 "place cursor after closing )
@@ -117,7 +148,7 @@ inoremap vv(	<esc>bi(<esc>ea)
 inoremap vvv(	<esc>0i(<esc>A)
 
 " --Double quote
-inoremap ""	""<Left>
+"inoremap ""	""<Left>
 "skips over " if " is next character
 inoremap <expr> "  strpart(getline('.'), col('.')-1, 1) == '"' ? "\<Right>" : '"'
 "place cursor after next "
@@ -128,11 +159,11 @@ inoremap vv" <esc>bi"<esc>ea"
 inoremap vvv" <esc>0i"<esc>A" 
 
 " --Braces
-inoremap {      {}<Left>
+"inoremap {      {}<Left>
 
-inoremap {<CR>  {<CR>}<Esc>O
+"inoremap {<CR>  {<CR>}<Esc>O
 "inoremap {{     {
-inoremap {}     {}
+"inoremap {}     {}
 "skips over } if { is next character
 inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
 "place cursor after closing }
@@ -192,7 +223,6 @@ autocmd FileType go vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
 
 "---------------------------------------------------------------
 " ---LaTeX keybinding
-autocmd FileType tex inoremap <leader>tempa \documentclass{article}<Enter>\title{<++>}<Enter>\author{Stephen Pate}<Enter>\usepackage[margin=1in]{geometry}<Enter><Enter>\begin{document}<Enter>\maketitle<Enter><++><Enter>\end{document}<Esc>8k15li
 autocmd BufRead,BufNewFile *.tex setlocal filetype=tex
 autocmd FileType tex inoremap <leader>item \begin{itemize}<Enter><Enter>\end{itemize}<Enter><++><Esc>2ki\item<space>
 autocmd FileType tex inoremap <leader>enum \begin{enumerate}<Enter><Enter>\end{enumerate}<Enter><++><Esc>2ki\item<space>

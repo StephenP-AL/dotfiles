@@ -1,12 +1,12 @@
 " Plugin Manager
-
 call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'nanotech/jellybeans.vim'
 Plug 'neovim/nvim-lspconfig'
-"testing
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'kyazdani42/nvim-web-devicons' 
 
 call plug#end()
 
@@ -43,7 +43,7 @@ vim.lsp.config('clangd', {
 })
 vim.lsp.enable('clangd')
 EOF
-"Testing
+
 lua << EOF
 local cmp = require('cmp')
 
@@ -59,32 +59,35 @@ cmp.setup({
 })
 EOF
 
-"
-"lua << EOF
-"vim.api.nvim_create_autocmd("LspAttach", {
-"  callback = function(args)
-"    vim.bo[args.buf].omnifunc = 'v:lua.vim.lsp.omnifunc'
-"
-"    -- Auto-trigger completion after typing characters
-"    vim.api.nvim_create_autocmd("TextChangedI", {
-"      buffer = args.buf,
-"      callback = function()
-"        if vim.fn.pumvisible() == 0 then
-"          vim.api.nvim_feedkeys(
-"            vim.api.nvim_replace_termcodes("<C-x><C-o>", true, false, true),
-"            "n",
-"            true
-"          )
-"        end
-"      end,
-"    })
-"  end,
-"})
-"EOF
-"
+" Open a terminal in a bottom split
+lua << EOF
+function _G.toggle_bottom_terminal()
+  -- open bottom split
+  vim.cmd('botright 11split')
+  -- open terminal in the new split
+  vim.cmd('terminal')
+end
+EOF
 
+lua << EOF
+require'nvim-tree'.setup {
+  hijack_cursor = true,       -- keeps cursor on the file when navigating
+  update_focused_file = {
+    enable = true,            -- highlight and focus current file
+    update_cwd = true,
+  },
+  view = {
+    width = 30,
+    side = 'left',
+  },
+}
+EOF
 
-" LSP Keymaps (DO NOT conflict with yours)
+" Map F9 to call the function
+nnoremap <F9> :lua _G.toggle_bottom_terminal()<CR>i
+inoremap <F9> <Esc>:lua _G.toggle_bottom_terminal()<CR>i
+
+" LSP Keymaps 
 nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> K  :lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gr :lua vim.lsp.buf.references()<CR>
@@ -115,8 +118,8 @@ nnoremap N	Nzz
 "inoremap <leader><space> <Esc>/<++><Enter>"_4cl
 
 "open terminal
-map <F9> :term <cr>i
-inoremap <F9> <esc>:term<cr>i
+"map <F9> :term <cr>i
+"inoremap <F9> <esc>:term<cr>i
 
 "---------------------------------------------------------------
 " ---Split panes 
@@ -193,40 +196,13 @@ inoremap vvv{	<esc>0i{<esc>A}
 vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
 vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>
 vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>
-"---------------------------------------------------------------
-"---------------------------------------------------------------
-" ---File specific keybindings
 
-"---------------------------------------------------------------
-"---------------------------------------------------------------
-" ---sh keybinding
-autocmd BufRead,BufNewFile *.sh setlocal filetype=sh
-"case/switch statement
-autocmd FileType sh inoremap <leader>ca read<space>n<Enter>case<space>$n<space>in<Enter><Enter>*)<++><Enter>&&<esc>hr;lr;oesac<Enter><++><esc>4ki<tab>
-"case item
-autocmd FileType sh inoremap <leader>ci )<tab><++><Enter>&&<esc>hr;lr;o<++><esc>2k0la
-"while loop
-autocmd FileType sh inoremap <leader>w while<space>;<space>do<Enter><++><Enter>done<Enter><++><esc>3k0wi
-"for loop
-autocmd FileType sh inoremap <leader>f for<space><space>in<space><++>;<space>do<Enter><++><Enter>done<esc>2k04li
-"comment out selected text
-autocmd FileType sh vnoremap <leader>c <esc>`<i:<space>'<space><cr><esc>`>a<cr>'<esc>
-
-
-"---------------------------------------------------------------
-" ---md keybindings
-autocmd BufRead,BufNewFile *.md setlocal filetype=md
-autocmd FileType md inoremap <leader>c <Esc>o```<Enter><Enter>```<Enter><++><Esc>2ki
-autocmd FileType md inoremap <leader>i ![](image/<++>)<Esc>12hi
-autocmd FileType md inoremap <leader>l [](<++>)<Esc>6hi
-autocmd FileType md inoremap <leader>el [](http://<++>)<Esc>13hi
-
-
-"---------------------------------------------------------------
-" ---ARM Assembly keybindings
-autocmd BufRead,BufNewFile *.s setlocal filetype=s
-"for loop
-autocmd FileType s inoremap <leader>f <esc>0d$i@<esc>pomov<space>r0,<space>#<tab>@Iterations<cr><esc>pAStart:<tab>@Beginning<space>of<space>the<space>loop<cr><++><cr>subs,<space>r0,<space>#1<tab>@Decrement<space>the<space>counter<cr>bne<space><esc>pAStart<esc>4k03wa
-"add string to data
-autocmd FileType s inoremap <leader>st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li
-autocmd FileType s nnoremap <leader>st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li
+"File browser
+"let g:netrw_banner = 0
+"let g:netrw_browse_split = 3
+"let g:netrw_winsize = 20 
+"let g:netrw_liststyle = 3
+"
+""autocmd FileType netrw nmap <buffer> <F4> :q<cr>
+"nnoremap <F4> <esc>:Vexplore!<cr>
+nnoremap <F4> :NvimTreeToggle<CR>

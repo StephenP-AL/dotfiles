@@ -6,7 +6,10 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'nvim-tree/nvim-tree.lua'
-Plug 'kyazdani42/nvim-web-devicons' 
+Plug 'nvim-tree/nvim-web-devicons' 
+Plug 'mfussenegger/nvim-dap'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'theHamsta/nvim-dap-virtual-text'
 
 call plug#end()
 
@@ -61,6 +64,7 @@ cmp.setup({
   },
 })
 EOF
+nnoremap <leader>d :lua vim.diagnostic.open_float()<CR>
 
 " Open a terminal in a bottom split
 lua << EOF
@@ -235,6 +239,8 @@ inoremap <F2> <Esc>:setlocal spell! spelllang=en_us<CR>a
 noremap <F3> :set invnumber!<CR>
 inoremap <F3> <C-O>:set invnumber!<CR>
 
+nnoremap <F4> :NvimTreeToggle<CR>
+
 " Save with sudo"
 cmap w!! w !sudo tee > /dev/null %
 
@@ -242,19 +248,10 @@ cmap w!! w !sudo tee > /dev/null %
 map <F11> :mks!<space>quicksave.vim<cr>
 inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
 
-"map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
-
 " Center on search
 nnoremap n	nzz
 nnoremap N	Nzz
-
-"Find code reentry tag
-"inoremap <leader><space> <Esc>/<++><Enter>"_4cl
-
-"open terminal
-"map <F9> :term <cr>i
-"inoremap <F9> <esc>:term<cr>i
-
+"
 "---------------------------------------------------------------
 " ---Split panes 
 set splitright
@@ -331,12 +328,73 @@ vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
 vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>
 vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>
 
-"File browser
-"let g:netrw_banner = 0
-"let g:netrw_browse_split = 3
-"let g:netrw_winsize = 20 
-"let g:netrw_liststyle = 3
-"
-""autocmd FileType netrw nmap <buffer> <F4> :q<cr>
-"nnoremap <F4> <esc>:Vexplore!<cr>
-nnoremap <F4> :NvimTreeToggle<CR>
+
+" Nvim DAP for C++ 
+"-------------------------------
+lua << EOF
+local dap = require('dap')
+
+-- Adapter: VSCode C++ extension (OpenDebugAD7)
+dap.adapters.cppdbg = {
+  id = 'cppdbg',
+  type = 'executable',
+  command = '/path/to/OpenDebugAD7',  -- <-- set this to your cpptools extension path
+}
+
+-- C++ configuration
+dap.configurations.cpp = {
+  {
+    name = "Launch file",
+    type = "cppdbg",
+    request = "launch",
+    program = function()
+      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+    end,
+    cwd = '${workspaceFolder}',
+    stopOnEntry = true,
+    setupCommands = {
+      {
+        text = '-enable-pretty-printing',
+        description = 'enable pretty printing',
+        ignoreFailures = false
+      },
+    },
+  },
+}
+
+-- Use same configuration for C
+dap.configurations.c = dap.configurations.cpp
+
+-- Keymaps for debugging
+vim.keymap.set('n', '<F5>', require'dap'.continue, { silent = true })
+vim.keymap.set('n', '<F6>', require'dap'.toggle_breakpoint, { silent = true })
+vim.keymap.set('n', '<F7>', require'dap'.step_into, { silent = true })
+vim.keymap.set('n', '<F8>', require'dap'.step_over, { silent = true })
+EOF
+
+lua << EOF
+local dap = require('dap')
+vim.fn.sign_define('DapBreakpoint', {text='🛑', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapBreakpointCondition', {text='⚠️', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapStopped', {text='▶️', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapBreakpointRejected', {text='❌', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapLogPoint', {text='ℹ️', texthl='', linehl='', numhl=''})
+vim.fn.sign_define('DapWatchpoint', {text='👁️', texthl='', linehl='', numhl=''})
+
+vim.fn.sign_define("DiagnosticSignError", {text = "✗", texthl = "DiagnosticSignError"})
+vim.fn.sign_define("DiagnosticSignWarn",  {text = "⚠️", texthl = "DiagnosticSignWarn"})
+vim.fn.sign_define("DiagnosticSignInfo",  {text = "ℹ️", texthl = "DiagnosticSignInfo"})
+vim.fn.sign_define("DiagnosticSignHint",  {text = "💡", texthl = "DiagnosticSignHint"})
+EOF
+
+lua << EOF
+require("nvim-dap-virtual-text").setup({
+  enabled = true,               -- enable virtual text
+  enabled_commands = true,      -- add DAP commands for virtual text
+  highlight_changed_variables = true,
+  highlight_new_as_changed = true,
+  show_stop_reason = true,      -- show reason for stop (e.g., breakpoint hit)
+  commented = false,            -- show virtual text as comments
+  only_first_definition = false, -- show all occurrences
+})
+EOF

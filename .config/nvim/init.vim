@@ -5,7 +5,7 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'kyazdani42/nvim-tree.lua'
+Plug 'nvim-tree/nvim-tree.lua'
 Plug 'kyazdani42/nvim-web-devicons' 
 
 call plug#end()
@@ -19,9 +19,6 @@ let mapleader = ";;"
 
 set termguicolors
 colorscheme jellybeans
-
-set splitright
-set splitbelow
 
 set clipboard=unnamedplus
 set mouse=a
@@ -39,7 +36,13 @@ set completeopt=menu,menuone,noinsert
 
 lua << EOF
 vim.lsp.config('clangd', {
-    cmd = { "clangd" },
+    cmd = { 
+        "clangd",
+        "--background-index",
+        "--clang-tidy",
+        "--completion-style=detailed",
+        "--header-insertion=iwyu",
+    },
 })
 vim.lsp.enable('clangd')
 EOF
@@ -61,11 +64,20 @@ EOF
 
 " Open a terminal in a bottom split
 lua << EOF
+
+local term_buf = nil
+local term_win = nil
 function _G.toggle_bottom_terminal()
-  -- open bottom split
+  if term_win and vim.api.nvim_win_is_valid(term_win) then
+    vim.api.nvim_win_close(term_win, true)
+    term_win = nil
+    return
+  end
+
   vim.cmd('botright 11split')
-  -- open terminal in the new split
   vim.cmd('terminal')
+  term_buf = vim.api.nvim_get_current_buf()
+  term_win = vim.api.nvim_get_current_win()
 end
 EOF
 
@@ -88,10 +100,132 @@ nnoremap <F9> :lua _G.toggle_bottom_terminal()<CR>i
 inoremap <F9> <Esc>:lua _G.toggle_bottom_terminal()<CR>i
 
 " LSP Keymaps 
-nnoremap <silent> gd :lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K  :lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gr :lua vim.lsp.buf.references()<CR>
-nnoremap <silent> gi :lua vim.lsp.buf.implementation()<CR>
+lua << EOF
+vim.keymap.set("n", "gd", function()
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/definition", params, function(err, result)
+    if err or not result or vim.tbl_isempty(result) then
+      print("No definition found")
+      return
+    end
+
+    local def = result[1]
+    local uri = def.uri or def.targetUri
+    local filename = vim.uri_to_fname(uri)
+    local current = vim.api.nvim_buf_get_name(0)
+
+    if filename ~= current then
+      vim.cmd("tabnew " .. vim.fn.fnameescape(filename))
+    end
+
+    vim.api.nvim_win_set_cursor(0, {
+      def.range.start.line + 1,
+      def.range.start.character
+    })
+  end)
+end, { silent = true })
+EOF
+
+lua << EOF
+vim.keymap.set("n", "gD", function()
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/declaration", params, function(err, result)
+    if err or not result or vim.tbl_isempty(result) then
+      print("No declaration found")
+      return
+    end
+
+    local def = result[1]
+    local uri = def.uri or def.targetUri
+    local filename = vim.uri_to_fname(uri)
+    local current = vim.api.nvim_buf_get_name(0)
+
+    if filename ~= current then
+      vim.cmd("tabnew " .. vim.fn.fnameescape(filename))
+    end
+
+    vim.api.nvim_win_set_cursor(0, {
+      def.range.start.line + 1,
+      def.range.start.character
+    })
+  end)
+end, { silent = true })
+EOF
+
+lua << EOF
+vim.keymap.set("n", "gi", function()
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/implementation", params, function(err, result)
+    if err or not result or vim.tbl_isempty(result) then
+      print("No implementation found")
+      return
+    end
+
+    local def = result[1]
+    local uri = def.uri or def.targetUri
+    local filename = vim.uri_to_fname(uri)
+    local current = vim.api.nvim_buf_get_name(0)
+
+    if filename ~= current then
+      vim.cmd("tabnew " .. vim.fn.fnameescape(filename))
+    end
+
+    vim.api.nvim_win_set_cursor(0, {
+      def.range.start.line + 1,
+      def.range.start.character
+    })
+  end)
+end, { silent = true })
+EOF
+
+lua << EOF
+vim.keymap.set("n", "gt", function()
+  local params = vim.lsp.util.make_position_params()
+
+  vim.lsp.buf_request(0, "textDocument/typeDefinition", params, function(err, result)
+    if err or not result or vim.tbl_isempty(result) then
+      print("No type definition found")
+      return
+    end
+
+    local def = result[1]
+    local uri = def.uri or def.targetUri
+    local filename = vim.uri_to_fname(uri)
+    local current = vim.api.nvim_buf_get_name(0)
+
+    if filename ~= current then
+      vim.cmd("tabnew " .. vim.fn.fnameescape(filename))
+    end
+
+    vim.api.nvim_win_set_cursor(0, {
+      def.range.start.line + 1,
+      def.range.start.character
+    })
+  end)
+end, { silent = true })
+EOF
+
+lua << EOF
+vim.keymap.set("n", "gr", function()
+  vim.lsp.buf.references(nil, {
+    on_list = function(options)
+      -- Open a new tab
+      vim.cmd("tabnew")
+
+      -- Populate quickfix
+      vim.fn.setqflist({}, " ", options)
+
+      -- Open quickfix window
+      vim.cmd("copen")
+    end
+  })
+end, { silent = true })
+EOF
+
+nnoremap <silent> K :lua vim.lsp.buf.hover()<cr>
 
 "Spell check
 map <F2> :setlocal spell! spelllang=en_us<CR>
@@ -108,7 +242,7 @@ cmap w!! w !sudo tee > /dev/null %
 map <F11> :mks!<space>quicksave.vim<cr>
 inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
 
-map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
+"map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
 
 " Center on search
 nnoremap n	nzz

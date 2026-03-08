@@ -1,272 +1,368 @@
-syntax on
+" ============================================================
+"  .vimrc — C++ / Qt Developer Config
+"  Vim 9.2 | Fedora
+"  Leader: ;;  |  Plugins: vim-plug
+" ============================================================
+"
+" Other installs :
+" clang clang-tools-extra cmake odejs npm python3-pip ripgrep python3-devel
+" llvm-devel clang-devel gdb 
+"
+" pip install dubugpy --user 
+"
+" vim-plug:
+" curl -fLo ~/.vim/autoload/plug.vim --create-dirs \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" in vim --  :PlugInstall
+"
+" Compile YCM:
+" cd ~/.vim/plugged/YouCompleteMe; python3 install.py --clangd-completer
+"
+" " ─── PLUGIN MANAGER (vim-plug) ───────────────────────────────
+call plug#begin('~/.vim/plugged')
 
-"Vundle
+" File browser
+Plug 'preservim/nerdtree'
+Plug 'jistr/vim-nerdtree-tabs'
+Plug 'ryanoasis/vim-devicons'              " Icons in NERDTree (needs a Nerd Font)
+
+" Fuzzy finder / project-wide search
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+
+" Autocompletion + GoTo definition + find references (clangd backend)
+Plug 'ycm-core/YouCompleteMe', { 'do': 'python3 install.py --clangd-completer' }
+
+" Debugging
+Plug 'puremourning/vimspector'
+
+" Colorscheme
+Plug 'nanotech/jellybeans.vim'
+
+" Status line
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" Git integration (optional but very handy)
+Plug 'tpope/vim-fugitive'
+
+" Syntax highlighting improvements
+Plug 'sheerun/vim-polyglot'
+
+" Comment toggling
+Plug 'tpope/vim-commentary'
+
+" Auto pairs (brackets, parens, quotes)
+Plug 'jiangmiao/auto-pairs'
+
+" Display tags/symbols in a sidebar
+Plug 'preservim/tagbar'
+
+call plug#end()
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── GENERAL SETTINGS ────────────────────────────────────────
 set nocompatible
-filetype plugin off
-
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'nanotech/jellybeans.vim'
-Plugin 'preservim/nerdtree'
-Plugin 'tpope/vim-surround'
-Plugin 'VundleVime/Vundle.vim'
-Plugin 'ycm-core/YouCompleteMe'
-call vundle#end()   
-
-
 filetype plugin indent on
-set number
-let mapleader = ";;"
-hi! link netrwMarkFile Search
+syntax enable
+
+set encoding=utf-8
+set fileencoding=utf-8
+set termencoding=utf-8
+
+set number                    " Line numbers
+"set relativenumber            " Relative line numbers
+set cursorline                " Highlight current line
+set showmatch                 " Highlight matching brackets
+set wildmenu                  " Better command completion
+set wildmode=longest:full,full
+set hidden                    " Allow unsaved buffers in background
+set splitright                " Vertical splits open to the right
+set splitbelow                " Horizontal splits open below
+set laststatus=2              " Always show status line
+set scrolloff=8               " Keep 8 lines visible above/below cursor
+set signcolumn=yes            " Always show sign column (for YCM diagnostics)
+set updatetime=300            " Faster update for YCM diagnostics
+set shortmess+=c              " Don't pass messages to ins-completion-menu
+set backspace=indent,eol,start
+
+" Tabs / Indentation
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+set autoindent
+set smartindent
+
+" Search
+set incsearch
+set hlsearch
+set ignorecase
+set smartcase
+
+" Backup / swap (keep them out of working dirs)
+set backupdir=~/.vim/backup//
+set directory=~/.vim/swap//
+set undodir=~/.vim/undo//
+set undofile
+silent! call mkdir(expand('~/.vim/backup'), 'p')
+silent! call mkdir(expand('~/.vim/swap'),   'p')
+silent! call mkdir(expand('~/.vim/undo'),   'p')
+
+" Mouse support
+set mouse=a
+" ─────────────────────────────────────────────────────────────
 
 
-"ctags
-set tags=./tags,../tags,/usr/include/rsvisa/tags;
-
-"Search
-command! -nargs=1 Vgrep vimgrep /<args>/ **/* | copen
-
-
-"colors
-set term=screen-256color
+" ─── COLORSCHEME ─────────────────────────────────────────────
+set t_Co=256
+set background=dark
 colorscheme jellybeans
-"---------------------------------------------------------------
-"---------------------------------------------------------------
-" ---Global keybindings
-
-"File browser
-let g:netrw_banner = 0
-let g:netrw_browse_split = 4
-let g:netrw_winsize = 20 
-let g:netrw_liststyle = 3
+" ─────────────────────────────────────────────────────────────
 
 
-"autocmd FileType netrw nmap <buffer> <F4> :q<cr>
-"nnoremap F4> <esc>:Vexplore<cr>
-
-"NERDTree
-nnoremap <F4> <esc>:NERDTreeToggleVCS<cr>
-" Open the existing NERDTree on each new tab.
-autocmd BufWinEnter * if &buftype != 'quickfix' && getcmdwintype() == '' | silent NERDTreeMirror | endif
-
-" Selected files open in new tab
-"let NERDTreeCustomOpenArgs={'file':{'where': 't'}}
-
-" Close the tab if NERDTree is the only window remaining in it.
-autocmd BufEnter * if winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
-
-"Spell check
-map <F2> :setlocal spell! spelllang=en_us<CR>
-inoremap <F2> <Esc>:setlocal spell! spelllang=en_us<CR>a
- 
-"Line numbers
-noremap <F3> :set invnumber!<CR>
-inoremap <F3> <C-O>:set invnumber!<CR>
-
-" Save with sudo"
-cmap w!! w !sudo tee > /dev/null %
-
-" Session quicksave
-map <F11> :mks!<space>quicksave.vim<cr>
-inoremap <F11> <esc>:mks!<space>quicksave.vim<cr>a
-
-map <F12> :execute "mksession! " . vimoirepath <Bar> echo "Session Saved"<cr>
-
-" Center on search
-nnoremap n	nzz
-nnoremap N	Nzz
-
-"Find code reentry tag
-"inoremap <leader><space> <Esc>/<++><Enter>4xa
-inoremap <leader><space> <Esc>/<++><Enter>"_4cl
-
-"open terminal
-map <F9> :ter<cr>
-inoremap <F9> <esc>:ter<cr>
-
-"---------------------------------------------------------------
-" ---Split panes 
-set splitright
-set splitbelow
-
-	
-" vertical split
-nnoremap <c-w>" :sp `dirname %`<cr> 
-inoremap <c-w>" <esc>:sp `dirname %`<cr> 
-" horizontal spilt
-nnoremap <c-w>% :vsplit `dirname %`<cr> 
-inoremap <c-w>% <esc>:vsplit `dirname %`<cr> 
-
-" resize panes
-nnoremap <c-s-k> :resize +2<CR>
-nnoremap <c-s-j> :resize -2<CR>
-nnoremap <c-s-h> :vertical resize -2<CR>
-nnoremap <c-s-l> :vertical resize +2<CR>
-
-inoremap <c-s-k> <esc>:resize +2<CR>a
-inoremap <c-s-j> <esc>:resize -2<CR>a
-inoremap <c-s-h> <esc>:vertical resize -2<CR>a
-inoremap <c-s-l> <esc>:vertical resize +2<CR>a
-
-"---------------------------------------------------------------
-" ---Tabs
-"Unix new tab
-"nmap <silent> <F4> :tabnew `dirname %`<CR>
-nmap <silent> <Tab>o :tabnew `dirname %`<CR>
-"Windows new tab
-"nmap <silent> <F4> :tabnew  %:p:h:gs?\/?\\\\\\?<CR>
-
-"Cycle tabs
-nnoremap <F5> :tabp<CR>
-nnoremap <Tab>h :tabp<CR>
-
-nnoremap <F8> :tabn<CR>
-nnoremap <Tab>l :tabn<CR>
-
-"Move tabs
-nnoremap <silent> <F6> :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
-nnoremap <silent> <F7> :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
-
-nnoremap <silent> <Tab>j :execute 'silent! tabmove ' . (tabpagenr()-2)<CR>
-nnoremap <silent> <Tab>k :execute 'silent! tabmove ' . (tabpagenr()+1)<CR>
+" ─── LEADER KEY ──────────────────────────────────────────────
+" Using ";;" as the leader key.
+" vim only allows a single character as mapleader, so we map
+" ";;" explicitly as a prefix for all custom bindings instead.
+" All custom mappings below use ";;" as the prefix.
+" ─────────────────────────────────────────────────────────────
 
 
-"---------------------------------------------------------------
-" ---Auto close tags
+" ─── NERDTREE (File Browser) ─────────────────────────────────
+" Toggle NERDTree with F4
+"nnoremap <F4> :NERDTreeToggle<CR>
+nnoremap <F4> :NERDTreeTabsToggle<CR>
 
-" --Parenthesis
-"inoremap (	()<Left>
-"inoremap ((	(
-"inoremap ()	()
-"skips over ) if ) is next character
-inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
-"place cursor after closing )
-inoremap <leader>)	<Esc>/)<Enter>a
-"enclose current word
-inoremap vv(	<esc>bi(<esc>ea)
-"enclose current line
-inoremap vvv(	<esc>0i(<esc>A)
+"Open files in a new tab by default
+let NERDTreeMapOpenInTab = '<CR>'       " Enter opens in new tab
+let NERDTreeMapOpenInTabSilent = 't'    " 't' opens silently in new tab
 
-" --Double quote
-"inoremap ""	""<Left>
-"skips over " if " is next character
-inoremap <expr> "  strpart(getline('.'), col('.')-1, 1) == '"' ? "\<Right>" : '"'
-"place cursor after next "
-inoremap <leader>"	<Esc>/"<Enter>a
-"enclose current word
-inoremap vv" <esc>bi"<esc>ea"
-"enclose current line
-inoremap vvv" <esc>0i"<esc>A" 
+let NERDTreeShowHidden = 1             " Show dotfiles
+let NERDTreeMinimalUI = 1              " Cleaner UI
+let NERDTreeAutoDeleteBuffer = 1       " Auto-delete buffer when file is deleted
+let NERDTreeQuitOnOpen = 0             " Keep tree open after opening a file
+let NERDTreeIgnore = ['\.o$', '\.d$', '\.pyc$', '__pycache__', '\.git$', 'build$']
 
-" --Braces
-"inoremap {      {}<Left>
+" Mirror tree in all tabs
+let g:nerdtree_tabs_open_on_console_startup = 1   " open on startup
+let g:nerdtree_tabs_synchronize_view = 1           " sync scroll & cursor
+let g:nerdtree_tabs_synchronize_focus = 1          " sync focus
 
-"inoremap {<CR>  {<CR>}<Esc>O
-"inoremap {{     {
-"inoremap {}     {}
-"skips over } if { is next character
-inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
-"place cursor after closing }
-inoremap <leader>}	<Esc>/}<Enter>a
-"enclose current word
-inoremap vv{	<esc>bi{<esc>ea}
-"enclose current line
-inoremap vvv{	<esc>0i{<esc>A}
-
-"visual mode, enclose selected text
-vnoremap <leader>" <esc>`>a"<esc>`<i"<esc>
-vnoremap <leader>( <esc>`>a)<esc>`<i(<esc>
-vnoremap <leader>{ <esc>`>a}<esc>`<i{<esc>
-"---------------------------------------------------------------
-"---------------------------------------------------------------
-" ---File specific keybindings
+" If NERDTree is the only window left, close vim
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 &&
+    \ exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+" ─────────────────────────────────────────────────────────────
 
 
-"---------------------------------------------------------------
-" ---C/C++ keybindings
-autocmd BufRead,BufNewFile *.c setlocal filetype=cpp
-"for loop
-autocmd FileType cpp inoremap <leader>f for(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
-"while loop
-autocmd FileType cpp inoremap <leader>w while(){<Enter><space><++><Enter>}<Enter><++><Esc>3k$T(i
-"do while loop
-autocmd FileType cpp inoremap <leader>do do{<Enter><Enter>}while(<++>);<Enter><++><Esc>2k$i
-"if statement
-autocmd FileType cpp inoremap <leader>if if(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
-"else statement
-autocmd FileType cpp inoremap <leader>el else{<Enter><Enter>}<Enter><++><Esc>2k$i<tab>
-"else if statement
-autocmd FileType cpp inoremap <leader>ei else<space>if(){<Enter><++><Enter>}<Enter><++><Esc>3k$T(i
-"debug code section
-autocmd FileType cpp inoremap <leader>de #ifdef<space>DEBUG<Enter><Enter>#endif<Enter><++><Esc>2k$i
-"debug message
-autocmd FileType cpp inoremap <leader>dm #ifdef<space>DEBUG<Enter>printf("%s\n","---DEBUG---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
-"another debug message
-autocmd FileType cpp inoremap <leader>d1 #ifdef<space>DEBUG1<Enter>printf("%s\n","---DEBUG1---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
-"another debug message
-autocmd FileType cpp inoremap <leader>d2 #ifdef<space>DEBUG2<Enter>printf("%s\n","---DEBUG2---");<Enter>#endif<Enter><++><Esc>3k/%s<Enter>lli
-"a comment section deliniated by lines of hyphens
-autocmd FileType cpp inoremap <leader>- //-------------------------------------------<Enter><Enter>-------------------------------------------<Enter><Esc>02xi<++><Esc>2kA<space>
-"Encloses selected section in comment tags
-autocmd FileType cpp vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
-"---------------------------------------------------------------
-" ---GOlang keybinding
-autocmd BufRead, BufNewFile *.go setlocal filetype=go
-"for loop
-autocmd FileType go inoremap <leader>f for<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
-"if statement
-autocmd FileType go inoremap <leader>if if<space>{<Enter><++><Enter>}<Enter><++><Esc>3k0ea<space>
-"else if statement
-autocmd FileType go inoremap <leader>el else<space>{<Enter>}<Enter><++><Esc>2ko
-"Encloses selected section in comment tags
-autocmd FileType go vnoremap <leader>c <esc>`>a*/<esc>`<i/*<esc>
+" ─── YOUCOMPLETEME (Autocomplete + GoTo + References) ────────
+" Use clangd for C/C++
+let g:ycm_clangd_uses_ycmd_caching = 0
+let g:ycm_clangd_binary_path = exepath('clangd')
 
-"---------------------------------------------------------------
-" ---LaTeX keybinding
-autocmd BufRead,BufNewFile *.tex setlocal filetype=tex
-autocmd FileType tex inoremap <leader>item \begin{itemize}<Enter><Enter>\end{itemize}<Enter><++><Esc>2ki\item<space>
-autocmd FileType tex inoremap <leader>enum \begin{enumerate}<Enter><Enter>\end{enumerate}<Enter><++><Esc>2ki\item<space>
-autocmd FileType tex inoremap <leader>desc \begin{description}<Enter><Enter>\end{description}<Esc>2ki\item<space>
-autocmd FileType tex inoremap <leader>I \item<space>
-autocmd FileType tex inoremap <leader>eq \begin{equation}<Enter><Enter>\end{equation}<Enter><++><Esc>2ki
-autocmd FileType tex inoremap <leader>tab \begin{tabular}[t]{}<Enter><++><Enter>\end{tabular}<Enter><++><Esc>3k/]{<Enter>2li
-autocmd FileType tex inoremap <leader>{ \{\}<++><Esc>5hi
-"Bold selected text
-autocmd FileType tex vnoremap <leader>b <esc>`>a}<esc>`<i\textbf{<esc>
-"italicize selected text
-autocmd FileType tex vnoremap <leader>i <esc>`>a}<esc>`<i\textit{<esc>
-"math tag selected text
-autocmd FileType tex vnoremap <leader>$ <esc>`>a$<esc>`<i$<esc>
+" Disable YCM's own diagnostic signs (we'll use its virtual text)
+let g:ycm_show_diagnostics_ui = 1
+let g:ycm_enable_diagnostic_signs = 1
+let g:ycm_enable_diagnostic_highlighting = 1
+let g:ycm_echo_current_diagnostic = 1
 
-"---------------------------------------------------------------
-" ---sh keybinding
-autocmd BufRead,BufNewFile *.sh setlocal filetype=sh
-"case/switch statement
-autocmd FileType sh inoremap <leader>ca read<space>n<Enter>case<space>$n<space>in<Enter><Enter>*)<++><Enter>&&<esc>hr;lr;oesac<Enter><++><esc>4ki<tab>
-"case item
-autocmd FileType sh inoremap <leader>ci )<tab><++><Enter>&&<esc>hr;lr;o<++><esc>2k0la
-"while loop
-autocmd FileType sh inoremap <leader>w while<space>;<space>do<Enter><++><Enter>done<Enter><++><esc>3k0wi
-"for loop
-autocmd FileType sh inoremap <leader>f for<space><space>in<space><++>;<space>do<Enter><++><Enter>done<esc>2k04li
-"comment out selected text
-autocmd FileType sh vnoremap <leader>c <esc>`<i:<space>'<space><cr><esc>`>a<cr>'<esc>
+" Auto-close preview window after completion
+let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_autoclose_preview_window_after_insertion = 1
+
+" Min chars before triggering completion
+let g:ycm_min_num_of_chars_for_completion = 2
+
+" Seed identifiers from comments and strings
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+
+" Extra config file (per-project, for compile flags fallback)
+let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
+
+" ── GoTo bindings (;;g prefix) ──
+" Go to definition (new tab if different file)
+nnoremap gd :tab YcmCompleter GoToDefinition<CR>
+
+" Go to declaration (new tab if different file)
+nnoremap gD :tab YcmCompleter GoToDeclaration<CR>
+
+" Go to definition or declaration (smart)
+nnoremap ;;gg :tab YcmCompleter GoTo<CR>
+
+" ── Show all references ──
+nnoremap gr :YcmCompleter GoToReferences<CR>
+
+" ── Show documentation/type ──
+nnoremap K  :YcmCompleter GetDoc<CR>
+nnoremap ;;t  :YcmCompleter GetType<CR>
+
+" ── Rename symbol ──
+nnoremap ;;rn :YcmCompleter RefactorRename<Space>
+
+" ── Fix diagnostic / apply fixit ──
+nnoremap ;;fx :YcmCompleter FixIt<CR>
+
+" Navigate diagnostics
+nnoremap ;;]  :lnext<CR>
+nnoremap ;;[  :lprev<CR>
+" ─────────────────────────────────────────────────────────────
 
 
-"---------------------------------------------------------------
-" ---md keybindings
-autocmd BufRead,BufNewFile *.md setlocal filetype=md
-autocmd FileType md inoremap <leader>c <Esc>o```<Enter><Enter>```<Enter><++><Esc>2ki
-autocmd FileType md inoremap <leader>i ![](image/<++>)<Esc>12hi
-autocmd FileType md inoremap <leader>l [](<++>)<Esc>6hi
-autocmd FileType md inoremap <leader>el [](http://<++>)<Esc>13hi
+" ─── FZF (Project-wide Search) ───────────────────────────────
+" Project-wide text search with ripgrep (;;/)
+nnoremap ;;/  :Rg<Space>
+
+" Search word under cursor project-wide (;;*)
+nnoremap ;;*  :Rg <C-R><C-W><CR>
+
+" Fuzzy file finder (;;f)
+nnoremap ;;f  :Files<CR>
+
+" Search open buffers (;;b)
+nnoremap ;;b  :Buffers<CR>
+
+" Search lines in current file (;;l)
+nnoremap ;;l  :BLines<CR>
+
+" Search all tags/symbols (;;s)
+nnoremap ;;s  :Tags<CR>
+
+" Configure FZF to open results in a new tab
+let g:fzf_action = {
+    \ 'ctrl-t': 'tab split',
+    \ 'ctrl-x': 'split',
+    \ 'ctrl-v': 'vsplit' }
+
+" FZF layout — floating window
+let g:fzf_layout = { 'window': { 'width': 0.9, 'height': 0.8 } }
+
+" Use ripgrep for :Files (respects .gitignore)
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git"'
+" ─────────────────────────────────────────────────────────────
 
 
-"---------------------------------------------------------------
-" ---ARM Assembly keybindings
-autocmd BufRead,BufNewFile *.s setlocal filetype=s
-"for loop
-autocmd FileType s inoremap <leader>f <esc>0d$i@<esc>pomov<space>r0,<space>#<tab>@Iterations<cr><esc>pAStart:<tab>@Beginning<space>of<space>the<space>loop<cr><++><cr>subs,<space>r0,<space>#1<tab>@Decrement<space>the<space>counter<cr>bne<space><esc>pAStart<esc>4k03wa
-"add string to data
-autocmd FileType s inoremap <leader>st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li
-autocmd FileType s nnoremap <leader>st <esc>/.data<Enter>o<cr>.balign<space>4<cr>str:<space>.asciz<space>"<++>\n"<esc>k02li
+" ─── VIMSPECTOR (Debugging) ──────────────────────────────────
+" Enable Vimspector
+let g:vimspector_enable_mappings = 'NONE'    " We define our own mappings
+
+" Debugging keybindings (;;d prefix)
+nnoremap ;;dl  :call vimspector#Launch()<CR>             " Launch / Start debug
+nnoremap ;;dq  :call vimspector#Reset()<CR>              " Stop / Quit debug
+nnoremap ;;dc  :call vimspector#Continue()<CR>           " Continue
+nnoremap ;;db  :call vimspector#ToggleBreakpoint()<CR>   " Toggle breakpoint
+nnoremap ;;dB  :call vimspector#ToggleConditionalBreakpoint()<CR>
+nnoremap ;;do  :call vimspector#StepOver()<CR>           " Step over
+nnoremap ;;di  :call vimspector#StepInto()<CR>           " Step into
+nnoremap ;;dO  :call vimspector#StepOut()<CR>            " Step out
+nnoremap ;;dr  :call vimspector#RunToCursor()<CR>        " Run to cursor
+nnoremap ;;dw  :call vimspector#AddWatch('')<Left><Left> " Add watch expression
+nnoremap ;;de  :call vimspector#Evaluate('')<Left><Left> " Evaluate expression
+nnoremap ;;dp  :call vimspector#Pause()<CR>              " Pause
+nnoremap ;;dR  :call vimspector#Restart()<CR>            " Restart
+nnoremap ;;dx  :call vimspector#ClearBreakpoints()<CR>   " Clear all breakpoints
+
+" Show vimspector windows
+nnoremap ;;dv  :call vimspector#ShowOutput( 'Console' )<CR>
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── TAGBAR (Symbol Browser) ─────────────────────────────────
+" Toggle symbol browser with F3
+nnoremap <F3> :TagbarToggle<CR>
+let g:tagbar_autofocus = 1
+let g:tagbar_sort = 0
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── AIRLINE ─────────────────────────────────────────────────
+let g:airline_theme = 'jellybeans'
+let g:airline#extensions#tabline#enabled = 1        " Show tabs at top
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#tab_nr_type = 1
+let g:airline#extensions#ycm#enabled = 1            " Show YCM errors in status
+let g:airline_powerline_fonts = 1                   " Requires a Nerd Font
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── TAB NAVIGATION ──────────────────────────────────────────
+nnoremap <Tab>     :tabnext<CR>
+nnoremap <S-Tab>   :tabprev<CR>
+
+" Tab navigation with leader (;;1 through ;;9)
+for i in range(1, 9)
+    execute 'nnoremap ;;' . i . ' ' . i . 'gt'
+endfor
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── MISCELLANEOUS KEYBINDINGS ───────────────────────────────
+" Clear search highlight
+nnoremap ;;h  :nohlsearch<CR>
+
+" Toggle paste mode
+set pastetoggle=<F2>
+
+" Better window navigation (without leader)
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Move lines up/down in visual mode
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
+" Keep cursor centered when searching
+nnoremap n nzzzv
+nnoremap N Nzzzv
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── FILETYPE SPECIFIC ───────────────────────────────────────
+" C / C++
+autocmd FileType c,cpp setlocal tabstop=4 shiftwidth=4 expandtab
+autocmd FileType c,cpp setlocal commentstring=//\ %s
+
+" QML (Qt)
+autocmd BufNewFile,BufRead *.qml setfiletype qml
+
+" Python
+autocmd FileType python setlocal tabstop=4 shiftwidth=4 expandtab
+
+" JavaScript
+autocmd FileType javascript setlocal tabstop=2 shiftwidth=2 expandtab
+
+" SQL
+autocmd FileType sql setlocal tabstop=4 shiftwidth=4 expandtab
+
+" Bash
+autocmd FileType sh setlocal tabstop=4 shiftwidth=4 expandtab
+
+" CMakeLists
+autocmd BufNewFile,BufRead CMakeLists.txt setfiletype cmake
+autocmd BufNewFile,BufRead *.cmake        setfiletype cmake
+
+" Meson
+autocmd BufNewFile,BufRead meson.build    setfiletype meson
+" ─────────────────────────────────────────────────────────────
+
+
+" ─── YCM EXTRA CONF (fallback for projects without compile_commands.json) ─
+" Creates a minimal ~/.vim/.ycm_extra_conf.py automatically
+if !filereadable(expand('~/.vim/.ycm_extra_conf.py'))
+    call writefile([
+        \ 'def Settings(**kwargs):',
+        \ '    return {',
+        \ '        "flags": [',
+        \ '            "-x", "c++",',
+        \ '            "-std=c++17",',
+        \ '            "-Wall",',
+        \ '            "-Wextra",',
+        \ '            "-I/usr/include",',
+        \ '            "-I/usr/local/include",',
+        \ '        ],',
+        \ '    }',
+        \ ], expand('~/.vim/.ycm_extra_conf.py'))
+endif
+" ─────────────────────────────────────────────────────────────
